@@ -50,7 +50,7 @@ include('../components/hero.html');
     <!-- Results Count -->
     <div class="w-full mb-6">
       <div class="text-center">
-        <p class="text-pink-600 font-medium"><?= $total_products ?> Products Available</p>
+        <p class="text-slate-900 font-medium"><?= $total_products ?> Products Available</p>
       </div>
     </div>
 
@@ -58,8 +58,8 @@ include('../components/hero.html');
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <?php if (empty($products)): ?>
           <div class="col-span-full text-center py-12">
-            <h3 class="font-Tinos text-2xl text-pink-800 mb-4">No products found</h3>
-            <p class="text-pink-600">Check back later for new arrivals!</p>
+            <h3 class="font-Tinos text-2xl text-slate-700 mb-4">No products found</h3>
+            <p class="text-slate-700">Check back later for new arrivals!</p>
           </div>
         <?php else: ?>
           <?php foreach ($products as $product): ?>
@@ -73,27 +73,27 @@ include('../components/hero.html');
                     class="h-full w-full object-cover hover:scale-105 transition-transform duration-300">
                 </a>
                 <button
-                  class="absolute top-3 right-3 rounded-full bg-white/80 p-2 text-pink-600 shadow hover:bg-white transition-colors">
+                  class="absolute top-3 right-3 rounded-full bg-white/80 p-2 text-pink-500 shadow hover:bg-white transition-colors ">
                   ♡
                 </button>
               </div>
               <div class="flex flex-1 flex-col justify-between p-4">
                 <div>
-                  <h3 class="font-semibold text-pink-700 mb-2">
+                  <h3 class="font-semibold text-slate-900 mb-2">
                     <a href="product-detail.php?id=<?= $product['product_id'] ?>"
-                      class="hover:text-pink-800 transition-colors">
+                      class="hover:text-slate-700 transition-colors">
                       <?= htmlspecialchars($product['product_name']) ?>
                     </a>
                   </h3>
-                  <p class="mt-1 text-pink-600 text-sm mb-2">
+                  <p class="mt-1 text-slate-700 text-sm mb-2">
                     <?= htmlspecialchars(substr($product['description'], 0, 100)) ?>...
                   </p>
-                  <p class="text-pink-500 text-xs">
+                  <p class="text-slate-900  text-xs">
                     Material: <?= htmlspecialchars($product['material']) ?>
                   </p>
                 </div>
                 <div class="mt-4 flex items-center justify-between">
-                  <div class="font-bold text-pink-700"><?= format_price($product['price']) ?></div>
+                  <div class="font-bold text-slate-900"><?= format_price($product['price']) ?></div>
                   <?php if ($isLoggedIn): ?>
                     <form action="cart.php" method="post" class="inline">
                       <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
@@ -121,18 +121,18 @@ include('../components/hero.html');
         <div class="flex justify-center items-center mt-12 space-x-4">
           <?php if ($current_page > 1): ?>
             <a href="shop.php?p=<?= $current_page - 1 ?>"
-              class="px-4 py-2 bg-pink-200 text-pink-800 rounded-lg hover:bg-pink-300 transition-colors">
+              class="px-4 py-2  text-slate-700 rounded-lg hover:bg-pink-300 transition-colors">
               Previous
             </a>
           <?php endif; ?>
 
-          <span class="px-4 py-2 bg-pink-100 text-pink-800 rounded-lg">
+          <span class="px-4 py-2  text-slate-700 rounded-lg">
             Page <?= $current_page ?> of <?= ceil($total_products / $num_products_on_each_page) ?>
           </span>
 
           <?php if ($total_products > ($current_page * $num_products_on_each_page)): ?>
             <a href="shop.php?p=<?= $current_page + 1 ?>"
-              class="px-4 py-2 bg-pink-200 text-pink-800 rounded-lg hover:bg-pink-300 transition-colors">
+              class="px-4 py-2  text-slate-700 rounded-lg hover:bg-pink-300 transition-colors">
               Next
             </a>
           <?php endif; ?>

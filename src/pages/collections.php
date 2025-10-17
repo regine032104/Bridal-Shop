@@ -23,8 +23,8 @@ include('../components/hero.html');
 ?>
 
 <section class="flex-grow py-5 md:py-5">
- 
-  
+
+
   <div class="relative z-10 m-auto max-w-screen-xl justify-center py-5">
     <!-- Collections Grid -->
     <div class="grid grid-cols-1 gap-8 px-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -40,7 +40,7 @@ include('../components/hero.html');
           <h3 class="font-Tinos text-xl text-pink-950">Issa</h3>
           <p class="mt-2 text-sm text-slate-700">Elegant off-the-shoulder gown with delicate lace detailing</p>
           <div class="mt-4">
-            <span class="text-lg font-semibold text-slate-700">$2,500</span>
+            <span class="text-lg font-semibold text-slate-700">₱2,500</span>
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@ include('../components/hero.html');
           <h3 class="font-Tinos text-xl text-pink-950">Jenna</h3>
           <p class="mt-2 text-sm text-slate-700">Romantic A-line gown with voluminous tulle skirt</p>
           <div class="mt-4">
-            <span class="text-lg font-semibold text-slate-700">$2,800</span>
+            <span class="text-lg font-semibold text-slate-700">₱2,800</span>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ include('../components/hero.html');
           <h3 class="font-Tinos text-xl text-pink-950">Allia</h3>
           <p class="mt-2 text-sm text-slate-700">Dramatic high-low gown with structured corset bodice</p>
           <div class="mt-4">
-            <span class="text-lg font-semibold text-slate-700">$3,200</span>
+            <span class="text-lg font-semibold text-slate-700">₱3,200</span>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@ include('../components/hero.html');
           <h3 class="font-Tinos text-xl text-pink-950">Mia</h3>
           <p class="mt-2 text-sm text-slate-700">Chic tea-length dress with modern A-line silhouette</p>
           <div class="mt-4">
-            <span class="text-lg font-semibold text-slate-700">$1,800</span>
+            <span class="text-lg font-semibold text-slate-700">₱1,800</span>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ include('../components/hero.html');
           <h3 class="font-Tinos text-xl text-pink-950">Juliette</h3>
           <p class="mt-2 text-sm text-slate-700">Timeless long-sleeved gown with boat neck elegance</p>
           <div class="mt-4">
-            <span class="text-lg font-semibold text-slate-700">$2,900</span>
+            <span class="text-lg font-semibold text-slate-700">₱2,900</span>
           </div>
         </div>
       </div>
@@ -120,7 +120,7 @@ include('../components/hero.html');
           <h3 class="font-Tinos text-xl text-pink-950">Sarah</h3>
           <p class="mt-2 text-sm text-slate-700">Relaxed flowing gown with modern pocket details</p>
           <div class="mt-4">
-            <span class="text-lg font-semibold text-slate-700">$2,200</span>
+            <span class="text-lg font-semibold text-slate-700">₱2,200</span>
           </div>
         </div>
       </div>

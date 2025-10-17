@@ -9,12 +9,12 @@
 
 @layer theme {
   :root {
-    --color-primary: #F7C6C7;
-    --color-primary-dark: #E8B3B4;
-    --color-primary-light: #F9D4D5;
-    --color-secondary: #C98BB3;
-    --color-secondary-dark: #C8968F;
-    --color-secondary-light: #E2B5AE;
+    --color-primary: #FF80AB;
+    --color-primary-dark: hsl(359, 64%, 60%);
+    --color-primary-light: #e14c51;
+    --color-secondary: #FF5C8D;
+    --color-secondary-dark: #b70585;
+    --color-secondary-light: #9e3385;
     --color-surface: #FAF8F6;
     --color-surface-dark: #E8E2DD;
     --color-neutral: #A5948B;
