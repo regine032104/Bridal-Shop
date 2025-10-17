@@ -1,0 +1,383 @@
+Connect to MySQL Database
+
+on the @cart_function pages
+
+<?php
+session_start();
+// Include functions and connect to the database using PDO MySQL
+include 'functions.php';
+$pdo = pdo_connect_mysql();
+
+We first create the session with the session_start function. With that, we can store the products that are added to the cart. Subsequently, the script will connect to MySQL using the database connection function we created earlier in the connections.php file.
+
+5.2. Basic Routing
+
+Add after:
+PHP
+
+// Page is set to home (home.php) by default, so when the visitor visits, that will be the page they see.
+$page = isset($_GET['page']) && file_exists($_GET['page'] . '.php') ? $_GET['page'] : 'home';
+// Include and show the requested page
+include $page . '.php';
+?>
+
+The basic routing method used above checks if the GET request variable ($_GET['page']) exists. If not, the default page will be set to the home page, whereas if it exists, it will be the requested page.
+
+
+7.1. Get Products from Database with Pagination
+
+Edit the products.php file and add the following:
+PHP
+
+<?php
+// The amounts of products to show on each page
+$num_products_on_each_page = 4;
+// The current page - in the URL, will appear as index.php?page=products&p=1, index.php?page=products&p=2, etc...
+$current_page = isset($_GET['p']) && is_numeric($_GET['p']) ? (int)$_GET['p'] : 1;
+// Select products ordered by the date added
+$stmt = $pdo->prepare('SELECT * FROM products ORDER BY date_added DESC LIMIT ?,?');
+// bindValue will allow us to use an integer in the SQL statement, which we need to use for the LIMIT clause
+$stmt->bindValue(1, ($current_page - 1) * $num_products_on_each_page, PDO::PARAM_INT);
+$stmt->bindValue(2, $num_products_on_each_page, PDO::PARAM_INT);
+$stmt->execute();
+// Fetch the products from the database and return the result as an Array
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+Updating the $num_products_on_each_page variable will limit the number of products to show on each page.
+
+To determine which page the customer is on, we can execute a GET request. In the URL, this will appear as index.php?page=products&p=1, etc., and in our PHP script, the parameter p (which represents the page identifier) we can retrieve with the $_GET['p'] variable. Assuming the request is valid, the code will execute a query that will retrieve the limited products from our database.
+
+Note: We're executing queries using prepared statements.Prepared statements will fully prevent SQL injection. It's good practice to prepare statements with GET and POST requests.
+
+
+7.2. Get the Total number of Products
+
+Add after:
+PHP
+
+// Get the total number of products
+$total_products = $pdo->query('SELECT * FROM products')->rowCount();
+?>
+
+The code above will get the total number of products in our products table. The customer will be able to see the total number of products at the top of the products page.
+
+
+
+I still dont have products template to view products via clicking for more inforemation and to add it to cart.
+
+<?=template_header('Products')?>
+
+<div class="products content-wrapper">
+    <h1>Products</h1>
+    <p><?=$total_products?> Products</p>
+    <div class="products-wrapper">
+        <?php foreach ($products as $product): ?>
+        <a href="index.php?page=product&id=<?=$product['id']?>" class="product">
+            <img src="imgs/<?=$product['img']?>" width="200" height="200" alt="<?=$product['title']?>">
+            <span class="name"><?=$product['title']?></span>
+            <span class="price">
+                &dollar;<?=$product['price']?>
+                <?php if ($product['rrp'] > 0): ?>
+                <span class="rrp">&dollar;<?=$product['rrp']?></span>
+                <?php endif; ?>
+            </span>
+        </a>
+        <?php endforeach; ?>
+    </div>
+    <div class="buttons">
+        <?php if ($current_page > 1): ?>
+        <a href="index.php?page=products&p=<?=$current_page-1?>">Prev</a>
+        <?php endif; ?>
+        <?php if ($total_products > ($current_page * $num_products_on_each_page) - $num_products_on_each_page + count($products)): ?>
+        <a href="index.php?page=products&p=<?=$current_page+1?>">Next</a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<?=template_footer()?>
+
+
+8. Creating the Product Page
+
+The product page will display all details for a specified product, determined by the GET request ID variable. Customers can view the price, image, and description. The customer will be able to change the quantity and add to the cart with a click of a button.
+8.1. Get Product from Database with GET Request
+
+Edit the product.php file and add the following:
+PHP
+
+<?php
+// Check to make sure the id parameter is specified in the URL
+if (isset($_GET['id'])) {
+    // Prepare statement and execute, prevents SQL injection
+    $stmt = $pdo->prepare('SELECT * FROM products WHERE id = ?');
+    $stmt->execute([$_GET['id']]);
+    // Fetch the product from the database and return the result as an Array
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Check if the product exists (array is not empty)
+    if (!$product) {
+        // Simple error to display if the id for the product doesn't exists (array is empty)
+        exit('Product does not exist!');
+    }
+} else {
+    // Simple error to display if the id wasn't specified
+    exit('Product does not exist!');
+}
+?>
+
+
+8.2. Create Product Template
+
+Add after the PHP closing tag:
+PHP
+
+<?=template_header('Product')?>
+
+<div class="product content-wrapper">
+    <img src="imgs/<?=$product['img']?>" width="500" height="500" alt="<?=$product['title']?>">
+    <div>
+        <h1 class="name"><?=$product['title']?></h1>
+        <span class="price">
+            &dollar;<?=$product['price']?>
+            <?php if ($product['rrp'] > 0): ?>
+            <span class="rrp">&dollar;<?=$product['rrp']?></span>
+            <?php endif; ?>
+        </span>
+        <form action="index.php?page=cart" method="post">
+            <input type="number" name="quantity" value="1" min="1" max="<?=$product['quantity']?>" placeholder="Quantity" required>
+            <input type="hidden" name="product_id" value="<?=$product['id']?>">
+            <input type="submit" value="Add To Cart">
+        </form>
+        <div class="description">
+            <?=$product['description']?>
+        </div>
+    </div>
+</div>
+
+<?=template_footer()?>
+
+The template we'll use for the product page. The form is created, and the action attribute is set to the shopping cart page (index.php?page=cart) along with the method set to post. The shopping cart page (cart.php) will add the product to the cart.
+
+With the quantity form field, we can set a maximum value, which will reflect the product's quantity (retrieved from the products table). The product ID is also added to the form, as this is so we know which product the customer added.
+
+We don't need to include the product's name, description, etc, as we can get that data from the products table in our database with the product ID.
+
+
+9.1. Adding a Product to Cart
+
+Edit the cart.php file and add the following:
+PHP
+
+<?php
+// If the user clicked the add to cart button on the product page we can check for the form data
+if (isset($_POST['product_id'], $_POST['quantity']) && is_numeric($_POST['product_id']) && is_numeric($_POST['quantity'])) {
+    // Set the post variables so we easily identify them, also make sure they are integer
+    $product_id = (int)$_POST['product_id'];
+    $quantity = (int)$_POST['quantity'];
+    // Prepare the SQL statement, we basically are checking if the product exists in our databaser
+    $stmt = $pdo->prepare('SELECT * FROM products WHERE id = ?');
+    $stmt->execute([$_POST['product_id']]);
+    // Fetch the product from the database and return the result as an Array
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Check if the product exists (array is not empty)
+    if ($product && $quantity > 0) {
+        // Product exists in database, now we can create/update the session variable for the cart
+        if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+            if (array_key_exists($product_id, $_SESSION['cart'])) {
+                // Product exists in cart so just update the quanity
+                $_SESSION['cart'][$product_id] += $quantity;
+            } else {
+                // Product is not in cart so add it
+                $_SESSION['cart'][$product_id] = $quantity;
+            }
+        } else {
+            // There are no products in cart, this will add the first product to cart
+            $_SESSION['cart'] = array($product_id => $quantity);
+        }
+    }
+    // Prevent form resubmission...
+    header('location: index.php?page=cart');
+    exit;
+}
+
+In the code above we make use of the PHP session variables. We can use PHP sessions to remember the shopping cart products. For example, when a customer navigates to another page, the shopping cart will still contain the products previously added until the session expires (usually around 30 minutes).
+
+The code above will check if a product was added to the cart. Returning to the product.php file, you can see that we created an HTML form. We are checking for those form values. If the product exists, proceed to verify the product by selecting it from our products table in our database. We wouldn't want customers manipulating the system and adding non-existent products.
+
+The session variable cart will be an associated array of products, and with this array, we can add multiple products to the shopping cart. The array key will be the product ID, and the value will be the quantity. If a product already exists in the shopping cart, all we have to do is update the quantity.
+
+
+9.2. Removing a Product from Cart
+
+Add after:
+PHP
+
+// Remove product from cart, check for the URL param "remove", this is the product id, make sure it's a number and check if it's in the cart
+if (isset($_GET['remove']) && is_numeric($_GET['remove']) && isset($_SESSION['cart']) && isset($_SESSION['cart'][$_GET['remove']])) {
+    // Remove the product from the shopping cart
+    unset($_SESSION['cart'][$_GET['remove']]);
+}
+
+On the shopping cart page, the customer will have the ability to remove a product from the cart. When the button is clicked, we can use a GET request to determine which product to remove. For example, if we have a product with the ID 1, the following URL will remove it from the shopping cart: localhost/shoppingcart/index.php?page=cart&remove=1.
+9.3. Updating Product Quantities
+
+Add after:
+PHP
+
+// Update product quantities in cart if the user clicks the "Update" button on the shopping cart page
+if (isset($_POST['update']) && isset($_SESSION['cart'])) {
+    // Loop through the post data so we can update the quantities for every product in cart
+    foreach ($_POST as $k => $v) {
+        if (strpos($k, 'quantity') !== false && is_numeric($v)) {
+            $id = str_replace('quantity-', '', $k);
+            $quantity = (int)$v;
+            // Always do checks and validation
+            if (is_numeric($id) && isset($_SESSION['cart'][$id]) && $quantity > 0) {
+                // Update new quantity
+                $_SESSION['cart'][$id] = $quantity;
+            }
+        }
+    }
+    // Prevent form resubmission...
+    header('Location: index.php?page=cart');
+    exit;
+}
+
+The code above will iterate the products in the shopping cart and update the quantities. The customer will have the ability to change the quantities on the shopping cart page. The Update button has the name of update, as this is how the code will know when to update the quantities using a POST request.
+
+
+9.4. Handling the Place Order
+
+Add after:
+PHP
+
+// Send the user to the place order page if they click the Place Order button, also the cart should not be empty
+if (isset($_POST['placeorder']) && isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+    header('Location: index.php?page=placeorder');
+    exit;
+}
+
+This will redirect the user to the place order page if they click the Place Order button.
+9.5. Get Products in Cart and Select from Database
+
+Add after:
+PHP
+
+// Check the session variable for products in cart
+$products_in_cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : array();
+$products = array();
+$subtotal = 0.00;
+// If there are products in cart
+if ($products_in_cart) {
+    // There are products in the cart so we need to select those products from the database
+    // Products in cart array to question mark string array, we need the SQL statement to include IN (?,?,?,...etc)
+    $array_to_question_marks = implode(',', array_fill(0, count($products_in_cart), '?'));
+    $stmt = $pdo->prepare('SELECT * FROM products WHERE id IN (' . $array_to_question_marks . ')');
+    // We only need the array keys, not the values, the keys are the id's of the products
+    $stmt->execute(array_keys($products_in_cart));
+    // Fetch the products from the database and return the result as an Array
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Calculate the subtotal
+    foreach ($products as $product) {
+        $subtotal += (float)$product['price'] * (int)$products_in_cart[$product['id']];
+    }
+}
+?>
+
+If there are products in the shopping cart, retrieve those products from our products table, along with the following column name: product name, description, image, and price, as before we didn't store this information in our session variable.
+
+We also calculate the subtotal by iterating the products and multiplying the price by the quantity.
+9.6. Create Shopping Cart Template
+
+Add below the PHP closing tag:
+PHP
+
+<?=template_header('Cart')?>
+
+<div class="cart content-wrapper">
+    <h1>Shopping Cart</h1>
+    <form action="index.php?page=cart" method="post">
+        <table>
+            <thead>
+                <tr>
+                    <td colspan="2">Product</td>
+                    <td>Price</td>
+                    <td>Quantity</td>
+                    <td>Total</td>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($products)): ?>
+                <tr>
+                    <td colspan="5" style="text-align:center;">You have no products added in your Shopping Cart</td>
+                </tr>
+                <?php else: ?>
+                <?php foreach ($products as $product): ?>
+                <tr>
+                    <td class="img">
+                        <a href="index.php?page=product&id=<?=$product['id']?>">
+                            <img src="imgs/<?=$product['img']?>" width="50" height="50" alt="<?=$product['title']?>">
+                        </a>
+                    </td>
+                    <td>
+                        <a href="index.php?page=product&id=<?=$product['id']?>"><?=$product['title']?></a>
+                        <br>
+                        <a href="index.php?page=cart&remove=<?=$product['id']?>" class="remove">Remove</a>
+                    </td>
+                    <td class="price">&dollar;<?=$product['price']?></td>
+                    <td class="quantity">
+                        <input type="number" name="quantity-<?=$product['id']?>" value="<?=$products_in_cart[$product['id']]?>" min="1" max="<?=$product['quantity']?>" placeholder="Quantity" required>
+                    </td>
+                    <td class="price">&dollar;<?=$product['price'] * $products_in_cart[$product['id']]?></td>
+                </tr>
+                <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <div class="subtotal">
+            <span class="text">Subtotal</span>
+            <span class="price">&dollar;<?=$subtotal?></span>
+        </div>
+        <div class="buttons">
+            <input type="submit" value="Update" name="update">
+            <input type="submit" value="Place Order" name="placeorder">
+        </div>
+    </form>
+</div>
+
+<?=template_footer()?>
+
+That's all we must do for the shopping cart page. The customer can now remove products and update quantities.
+
+10. Creating the Place Order Page
+
+The place order page will inform the customer that they've placed an order (added products to cart, proceeded to checkout). To reach the place order page, the customers must have products in their shopping cart and have clicked the Place Order button on the shopping cart page.
+10.1. Creating the Place Order Template
+
+Edit the placeorder.php file and add the following:
+PHP
+
+<?=template_header('Place Order')?>
+
+<div class="placeorder content-wrapper">
+    <h1>Your Order Has Been Placed</h1>
+    <p>Thank you for ordering with us! We'll contact you by email with your order details.</p>
+</div>
+
+<?=template_footer()?>
+
+And now, if we add a product to our shopping cart and click the Place Order button, we'll see the following:
+
+Feel free to change the place order message, etc.
+
+If you want to populate the purchased products, you can iterate the session cart variable using the foreach loop, similar to what we did on the shopping cart page.
+
+If you want to remove all the products from the cart, you can simply execute the following:
+PHP
+
+unset($_SESSION['cart'])
+
+The unset() function will destroy our session variable and therefore clear the shopping cart.
+
+
+
+
