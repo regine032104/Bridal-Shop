@@ -78,16 +78,19 @@ renderHeader([
 
 <section class="py-16">
     <div class="mx-auto max-w-4xl px-4">
-        <div class="overflow-hidden rounded-3xl border border-pink-200 bg-white shadow-[0_10px_30px_rgba(236,72,153,0.08)]">
+        <div
+            class="overflow-hidden rounded-3xl border border-pink-200 bg-white shadow-[0_10px_30px_rgba(236,72,153,0.08)]">
             <div class="bg-gradient-to-r from-pink-500 to-rose-500 p-10 text-center text-white">
-                <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white text-pink-500">
+                <div
+                    class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white text-pink-500">
                     <svg class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
                 <h1 class="mb-3 text-4xl font-semibold">Your order has been placed!</h1>
                 <p class="mx-auto max-w-2xl font-secondary text-lg text-pink-100">
-                    Thank you for choosing Promise Shop. We will email you the order details and shipping information shortly.
+                    Thank you for choosing Promise Shop. We will email you the order details and shipping information
+                    shortly.
                 </p>
             </div>
 
@@ -103,7 +106,8 @@ renderHeader([
                             <div>
                                 <p><strong>Total:</strong> <?= formatCurrency((float) $orderDetails['total_amount']); ?></p>
                                 <p><strong>Status:</strong>
-                                    <span class="ml-1 rounded-full px-2 py-1 text-xs font-semibold <?= formatStatus($orderDetails['status']); ?>">
+                                    <span
+                                        class="ml-1 rounded-full px-2 py-1 text-xs font-semibold <?= formatStatus($orderDetails['status']); ?>">
                                         <?= htmlspecialchars(ucfirst($orderDetails['status'])); ?>
                                     </span>
                                 </p>
@@ -116,11 +120,17 @@ renderHeader([
                                 <div class="space-y-3">
                                     <?php foreach ($orderItems as $item): ?>
                                         <div class="flex items-center gap-3 rounded-xl border border-pink-100 bg-white p-3">
-                                            <img src="../<?= str_replace('src/img/', 'img/', $item['image_path']); ?>" alt="<?= htmlspecialchars($item['product_name']); ?>" class="h-16 w-16 rounded-lg object-cover" />
+                                            <img src="../<?= str_replace('src/img/', 'img/', $item['image_path']); ?>"
+                                                alt="<?= htmlspecialchars($item['product_name']); ?>"
+                                                class="h-16 w-16 rounded-lg object-cover" />
                                             <div class="flex-1">
-                                                <h4 class="font-semibold text-pink-800"><?= htmlspecialchars($item['product_name']); ?></h4>
+                                                <h4 class="font-semibold text-pink-800">
+                                                    <?= htmlspecialchars($item['product_name']); ?>
+                                                </h4>
                                                 <p class="text-sm text-pink-600"><?= htmlspecialchars($item['material']); ?></p>
-                                                <p class="text-sm text-pink-700">Quantity: <?= (int) $item['quantity']; ?> × <?= formatCurrency((float) $item['unit_price']); ?></p>
+                                                <p class="text-sm text-pink-700">Quantity: <?= (int) $item['quantity']; ?> ×
+                                                    <?= formatCurrency((float) $item['unit_price']); ?>
+                                                </p>
                                             </div>
                                             <div class="text-right font-semibold text-pink-800">
                                                 <?= formatCurrency((float) $item['quantity'] * (float) $item['unit_price']); ?>
@@ -141,21 +151,26 @@ renderHeader([
                     <div class="flex flex-col justify-center gap-4 sm:flex-row">
                         <a href="orders.php" class="btn-primary">
                             <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
                             View my orders
                         </a>
                         <a href="shop.php" class="btn-secondary">
                             <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
                             Continue shopping
                         </a>
                     </div>
                     <div class="text-center text-sm">
-                        <a href="home.php" class="inline-flex items-center text-pink-600 transition-colors hover:text-pink-800">
+                        <a href="home.php"
+                            class="inline-flex items-center text-pink-600 transition-colors hover:text-pink-800">
                             <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                </path>
                             </svg>
                             Back to home
                         </a>
@@ -174,6 +189,7 @@ renderFooter([
         '<script src="../js/validation-integration.js"></script>',
         '<script src="../js/auth.js"></script>',
         '<script src="../js/reveal.js"></script>',
+        '<script src="../js/scroll-fade.js"></script>',
         '<script src="../js/reviews.js"></script>'
     ]
 ]);

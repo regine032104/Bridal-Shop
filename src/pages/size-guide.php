@@ -21,10 +21,63 @@ include('../components/hero.html');
   <div class="relative z-10 m-auto max-w-screen-xl justify-center px-4 pb-4">
 
     <!-- Introduction -->
-    <div class="mb-12 text-center">
-      <h2
-        class="font-Tinos text-center text-3xl leading-none tracking-widest text-slate-900 uppercase md:tracking-[0.6em] lg:tracking-[0.8em] mb-4">
-        Our Universal Sizing System</h2>
+    <div class="text-center">
+      <!-- FEATURED IMAGES CAROUSEL -->
+      <?php
+      // Dynamically select 5 images from the src/img directory (prefer project images)
+      $imgDir = __DIR__ . '/../img';
+      $available = [];
+      if (is_dir($imgDir)) {
+        $files = scandir($imgDir);
+        foreach ($files as $f) {
+          $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+          if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+            $available[] = $f;
+          }
+        }
+      }
+
+      // Use the user-specified bg images explicitly
+      $images = ['bg-2.png', 'bg-3.png', 'bg-4.png', 'bg-5.png'];
+      ?>
+
+      <section class="py-8 md:py-12">
+        <div class="mx-auto  ">
+          <div class="mx-auto max-w-5xl">
+            <h3
+              class="font-Tinos text-center text-3xl leading-none tracking-widest text-slate-900 uppercase md:tracking-[0.6em] lg:tracking-[0.8em] mb-4">
+              Our Universal Sizing System</h3>
+
+            <div id="featured-carousel" class="relative overflow-hidden rounded-lg w-full ">
+              <!-- Slides wrapper -->
+              <div class="carousel-track relative flex transition-transform duration-700 ease-in-out">
+                <?php foreach ($images as $idx => $img): ?>
+                  <div class="carousel-slide flex-shrink-0 w-full md:w-full">
+                    <div class="aspect-[10/10] md:aspect-[3/2] overflow-hidden rounded-lg bg-white">
+                      <img src="../img/<?php echo htmlspecialchars($img); ?>" alt="Featured <?php echo $idx + 1; ?>"
+                        class="h-full w-full object-contain" loading="lazy" decoding="async" />
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+
+              <!-- Left & Right click zones -->
+              <button id="carousel-prev" aria-label="Previous"
+                class="absolute left-0 top-0 h-full w-1/4 bg-transparent focus:outline-none md:w-12"></button>
+              <button id="carousel-next" aria-label="Next"
+                class="absolute right-0 top-0 h-full w-1/4 bg-transparent focus:outline-none md:w-12"></button>
+
+              <!-- Indicators -->
+              <div class="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+                <?php foreach ($images as $i => $img): ?>
+                  <button data-slide="<?php echo $i; ?>"
+                    class="indicator h-2 w-8 rounded-full bg-white/50 ring-1 ring-slate-200 transition-all duration-300"></button>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <p class="text-slate-700 max-w-4xl mx-auto mb-6">
         We have created our own universal sizing chart that we use against all dresses on rack in store. We do not go
         off each dress's tagged sizes. With dresses being made from all over the world, size categories are not in sync.
@@ -45,6 +98,7 @@ include('../components/hero.html');
         </p>
       </div>
     </div>
+
 
     <!-- How to Measure Section -->
     <div class="mb-16">
@@ -370,9 +424,11 @@ renderFooter([
   'scripts' => [
     '<script src="https://unpkg.com/motion@latest/dist/motion.umd.js"></script>',
     '<script src="../js/main.js"></script>',
+    '<script src="../js/featured-carousel.js"></script>',
     '<script src="../js/validation-integration.js"></script>',
     '<script src="../js/auth.js"></script>',
     '<script src="../js/reveal.js"></script>',
+    '<script src="../js/scroll-fade.js"></script>',
     '<script src="../js/reviews.js"></script>'
   ]
 ]);

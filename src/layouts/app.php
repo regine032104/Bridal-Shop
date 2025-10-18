@@ -13,22 +13,24 @@ if (!function_exists('renderHeader')) {
         $mainClass = $options['mainClass'] ?? 'flex-1';
         $additionalHead = $options['head'] ?? '';
         ?>
-<!doctype html>
-<html lang="en">
+        <!doctype html>
+        <html lang="en">
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?= htmlspecialchars($title) ?></title>
-    <link rel="stylesheet" href="../output.css" />
-    <?= $additionalHead ?>
-</head>
+        <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title><?= htmlspecialchars($title) ?></title>
+            <link rel="stylesheet" href="../output.css" />
+            <?= $additionalHead ?>
+        </head>
 
-<body class="<?= $bodyClass ?>">
-    <?php include('../components/navbar.html'); ?>
-    <?php if ($showModal) { include('../components/modal.html'); } ?>
-    <main class="<?= $mainClass ?>">
-        <?php
+        <body class="<?= $bodyClass ?>">
+            <?php include('../components/navbar.html'); ?>
+            <?php if ($showModal) {
+                include('../components/modal.html');
+            } ?>
+            <main class="<?= $mainClass ?>">
+                <?php
     }
 }
 
@@ -37,20 +39,21 @@ if (!function_exists('renderFooter')) {
     {
         $extraScripts = $options['scripts'] ?? [];
         ?>
-    </main>
-    <?php include('../components/footer.html'); ?>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-    <script src="../validation/register-validation.js"></script>
-    <script src="../validation/login-validation.js"></script>
-    <?php
-        foreach ($extraScripts as $scriptTag) {
-            echo $scriptTag, "\n";
-        }
-        ?>
-</body>
+            </main>
+            <?php include('../components/footer.html'); ?>
+            <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+            <script src="../validation/register-validation.js"></script>
+            <script src="../validation/login-validation.js"></script>
+            <script src="../js/navbar-shadow.js"></script>
+            <?php
+            foreach ($extraScripts as $scriptTag) {
+                echo $scriptTag, "\n";
+            }
+            ?>
+        </body>
 
-</html>
-<?php
+        </html>
+        <?php
     }
 }

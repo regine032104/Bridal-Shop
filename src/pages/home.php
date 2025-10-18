@@ -1,3 +1,17 @@
+<style>
+  /* Hide scrollbar for reviews row */
+  #reviews-row {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE 10+ */
+  }
+
+  #reviews-row::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari/Webkit */
+  }
+</style>
 <?php
 require_once('../backend/session_check.php');
 $isLoggedIn = isLoggedIn();
@@ -175,6 +189,8 @@ include('../components/hero.html');
   </div>
 </section>
 
+
+
 <!-- Story & Image -->
 <section class="py-16 md:py-20">
   <div class="mx-auto max-w-screen-xl px-4">
@@ -263,6 +279,9 @@ renderFooter([
   'scripts' => [
     '<script src="https://unpkg.com/motion@latest/dist/motion.umd.js"></script>',
     '<script src="../js/main.js"></script>',
+    '<script src="../js/featured-carousel.js"></script>',
+    '<script src="../js/reviews-drag.js"></script>',
+    '<script src="../js/scroll-fade.js"></script>',
     '<script src="../js/validation-integration.js"></script>',
     '<script src="../js/auth.js"></script>',
     '<script src="../js/reveal.js"></script>',

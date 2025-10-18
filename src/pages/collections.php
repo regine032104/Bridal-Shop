@@ -156,6 +156,7 @@ renderFooter([
     '<script src="../js/validation-integration.js"></script>',
     '<script src="../js/auth.js"></script>',
     '<script src="../js/reveal.js"></script>',
+    '<script src="../js/scroll-fade.js"></script>',
     '<script src="../js/reviews.js"></script>'
   ]
 ]);
