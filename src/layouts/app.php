@@ -46,6 +46,7 @@ if (!function_exists('renderFooter')) {
             <script src="../validation/register-validation.js"></script>
             <script src="../validation/login-validation.js"></script>
             <script src="../js/navbar-shadow.js"></script>
+            <script src="../js/navbar-active.js"></script>
             <?php
             foreach ($extraScripts as $scriptTag) {
                 echo $scriptTag, "\n";
