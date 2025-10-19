@@ -4,7 +4,27 @@ require_once('../backend/connections.php');
 
 $isLoggedIn = isLoggedIn();
 
-$stmt = $pdo->prepare('SELECT * FROM products WHERE product_id <= 6 ORDER BY date_added DESC');
+
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'default';
+$orderBy = 'date_added DESC';
+switch ($sort) {
+  case 'popularity':
+    $orderBy = 'popularity DESC';
+    break;
+  case 'rating':
+    $orderBy = 'average_rating DESC';
+    break;
+  case 'latest':
+    $orderBy = 'date_added DESC';
+    break;
+  case 'price_asc':
+    $orderBy = 'price ASC';
+    break;
+  case 'price_desc':
+    $orderBy = 'price DESC';
+    break;
+}
+$stmt = $pdo->prepare("SELECT * FROM products WHERE product_id <= 6 ORDER BY $orderBy");
 $stmt->execute();
 $dress_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $total_dresses = count($dress_products);
@@ -39,15 +59,16 @@ renderHeader([
       <p class="font-Unna text-slate-700">Showing 1-<?= min(9, $total_dresses) ?> of <?= $total_dresses ?> results</p>
       <div class="flex items-center gap-4">
         <!-- Sort Dropdown -->
-        <select
-          class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-candy-peach focus:border-candy-peach">
-          <option>Default sorting</option>
-          <option>Sort by popularity</option>
-          <option>Sort by average rating</option>
-          <option>Sort by latest</option>
-          <option>Sort by price: low to high</option>
-          <option>Sort by price: high to low</option>
-        </select>
+        <form method="get" id="sortForm">
+          <select name="sort" id="sortSelect"
+            class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-candy-peach focus:border-candy-peach"
+            onchange="document.getElementById('sortForm').submit()">
+            <option value="default" <?= $sort == 'default' ? 'selected' : '' ?>>Default sorting</option>
+            <option value="latest" <?= $sort == 'latest' ? 'selected' : '' ?>>Sort by latest</option>
+            <option value="price_asc" <?= $sort == 'price_asc' ? 'selected' : '' ?>>Sort by price: low to high</option>
+            <option value="price_desc" <?= $sort == 'price_desc' ? 'selected' : '' ?>>Sort by price: high to low</option>
+          </select>
+        </form>
       </div>
     </div>
 

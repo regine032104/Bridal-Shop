@@ -34,28 +34,89 @@ include('../components/hero.html');
       </p>
       <form id="contact-form" class="space-y-4" novalidate>
         <div>
-          <label for="contact-name" class="form-label text-slate-900">Name <span class="text-red-500">*</span></label>
-          <input id="contact-name" name="name" autocomplete="name" class="form-input" />
-          <div class="contact-error mt-1 hidden text-xs text-red-600" data-error-for="contact-name"></div>
-        </div>
-        <div>
-          <label for="contact-email" class="form-label text-slate-900">Email <span class="text-red-500">*</span></label>
-          <input id="contact-email" name="email" autocomplete="email" class="form-input" />
-          <div class="contact-error mt-1 hidden text-xs text-red-600" data-error-for="contact-email"></div>
-        </div>
-        <div>
-          <label for="contact-subject" class="form-label text-slate-900">Subject</label>
-          <input id="contact-subject" name="subject" class="form-input" />
-        </div>
-        <div>
-          <label for="contact-message" class="form-label text-slate-900">Message <span
+          <label for="contact-name" class="block text-slate-900 font-medium mb-1">Name <span
               class="text-red-500">*</span></label>
-          <textarea id="contact-message" name="message" class="form-input h-32 resize-none"></textarea>
-          <div class="contact-error mt-1 hidden text-xs text-red-600" data-error-for="contact-message"></div>
+          <input id="contact-name" name="name" type="text" required minlength="2" autocomplete="name"
+            placeholder="Your name"
+            class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" />
+          <p class="text-red-500 text-sm mt-1 hidden" id="contact-name-error"></p>
         </div>
-        <button type="submit" class="btn-primary w-full text-white hover:text-slate-900">
-          Send Message
-        </button>
+        <div>
+          <label for="contact-email" class="block text-slate-900 font-medium mb-1">Email <span
+              class="text-red-500">*</span></label>
+          <input id="contact-email" name="email" type="email" required autocomplete="email" placeholder="you@email.com"
+            class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" />
+          <p class="text-red-500 text-sm mt-1 hidden" id="contact-email-error"></p>
+        </div>
+        <div>
+          <label for="contact-subject" class="block text-slate-900 font-medium mb-1">Subject</label>
+          <input id="contact-subject" name="subject" type="text" placeholder="Subject (optional)"
+            class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" />
+        </div>
+        <div>
+          <label for="contact-message" class="block text-slate-900 font-medium mb-1">Message <span
+              class="text-red-500">*</span></label>
+          <textarea id="contact-message" name="message" required rows="3" placeholder="Your message (min 10 characters)"
+            class="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"></textarea>
+          <p class="text-red-500 text-sm mt-1 hidden" id="contact-message-error"></p>
+        </div>
+        <button type="submit" class="w-full bg-pink-500 text-white py-2 rounded-xl hover:bg-pink-600 transition">Send
+          Message</button>
+      </form>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+        $(function () {
+          function showError(id, msg) {
+            $(id).text(msg).removeClass('hidden');
+          }
+          function hideError(id) {
+            $(id).addClass('hidden').text('');
+          }
+          function isNameValid(name) {
+            return /^[A-Za-z\s'\-]{2,}$/.test(name.trim());
+          }
+          function isEmailValid(email) {
+            return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email.trim());
+          }
+          function isMessageValid(msg) {
+            return msg.trim().length >= 10;
+          }
+
+          $('#contact-form input, #contact-form textarea').on('blur change', function () {
+            validateField($(this).attr('id'));
+          });
+
+          function validateField(fieldId) {
+            var val = $('#' + fieldId).val();
+            switch (fieldId) {
+              case 'contact-name':
+                isNameValid(val) ? hideError('#contact-name-error') : showError('#contact-name-error', 'Please enter a valid name (letters, spaces, apostrophes, hyphens, min 2 characters).');
+                break;
+              case 'contact-email':
+                isEmailValid(val) ? hideError('#contact-email-error') : showError('#contact-email-error', 'Please enter a valid email address.');
+                break;
+              case 'contact-message':
+                isMessageValid(val) ? hideError('#contact-message-error') : showError('#contact-message-error', 'Message must be at least 10 characters.');
+                break;
+            }
+          }
+
+          $('#contact-form').on('submit', function (e) {
+            var valid = true;
+            var name = $('#contact-name').val();
+            var email = $('#contact-email').val();
+            var message = $('#contact-message').val();
+
+            if (!isNameValid(name)) { showError('#contact-name-error', 'Please enter a valid name (letters, spaces, apostrophes, hyphens, min 2 characters).'); valid = false; } else { hideError('#contact-name-error'); }
+            if (!isEmailValid(email)) { showError('#contact-email-error', 'Please enter a valid email address.'); valid = false; } else { hideError('#contact-email-error'); }
+            if (!isMessageValid(message)) { showError('#contact-message-error', 'Message must be at least 10 characters.'); valid = false; } else { hideError('#contact-message-error'); }
+
+            if (!valid) {
+              e.preventDefault();
+            }
+          });
+        });
+      </script>
       </form>
     </div>
 
