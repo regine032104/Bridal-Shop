@@ -210,7 +210,7 @@ include('../components/hero.html');
               Our mission is to make every couple feel confident and
               celebrated.
             </p>
-            <a href="../pages/about.php" aria-label="Learn more about our trunk show"
+            <a href="../pages/contact.php" aria-label="Learn more about our trunk show"
               class="mt-8 inline-block rounded-md border border-slate-900 px-6 py-3 text-sm font-medium text-slate-900 transition-colors hover:bg-white/40 focus:ring-2 focus:ring-slate-700 focus:ring-offset-2 focus:ring-offset-[#a8c4d6] focus:outline-none">
               Contact Us
             </a>
