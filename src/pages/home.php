@@ -192,7 +192,7 @@ include('../components/hero.html');
 
 
 <!-- Story & Image -->
-<section class="py-16 md:py-20">
+<section class="py-16 md:py-5">
   <div class="mx-auto max-w-screen-xl px-4">
     <div class="rounded-xl bg-candy-mint p-6 sm:p-10 md:p-12">
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
