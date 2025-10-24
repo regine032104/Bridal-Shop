@@ -60,7 +60,8 @@ include('../components/hero.html');
 
       <div class="text-center">
         <h2 id="welcome-modal-title" class="text-3xl font-bold text-dark mb-4">Welcome back,
-          <?php echo htmlspecialchars($user_name); ?>!</h2>
+          <?php echo htmlspecialchars($user_name); ?>!
+        </h2>
         <p class="text-slate-700 mb-6 max-w-lg mx-auto">Continue your bridal journey with personalized recommendations and
           exclusive offers.</p>
 
@@ -74,9 +75,9 @@ include('../components/hero.html');
 
   <script>
     (function () {
-  var modal = document.getElementById('welcome-modal');
-  var backdrop = document.getElementById('welcome-modal-backdrop');
-  var serverFlag = <?php echo $showWelcomeFromServer ? 'true' : 'false'; ?>;
+      var modal = document.getElementById('welcome-modal');
+      var backdrop = document.getElementById('welcome-modal-backdrop');
+      var serverFlag = <?php echo $showWelcomeFromServer ? 'true' : 'false'; ?>;
 
       if (!modal) return;
 
@@ -122,7 +123,7 @@ include('../components/hero.html');
       } catch (e) { /* ignore storage errors */ }
 
       // close handlers
-  backdrop.addEventListener('click', hideModal);
+      backdrop.addEventListener('click', hideModal);
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideModal(); });
     })();
   </script>
