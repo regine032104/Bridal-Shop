@@ -56,18 +56,12 @@ include('../components/hero.html');
     <!-- Modal dialog -->
     <div role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title" tabindex="-1"
       class="relative mx-4 w-full max-w-xl transform rounded-2xl bg-white p-6 shadow-lg transition-all scale-95 opacity-0">
-      <button id="welcome-modal-close" aria-label="Close"
-        class="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-slate-700 hover:bg-white focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-            clip-rule="evenodd" />
-        </svg>
-      </button>
+      <!-- Close button intentionally removed per request -->
 
       <div class="text-center">
         <h2 id="welcome-modal-title" class="text-3xl font-bold text-dark mb-4">Welcome back,
-          <?php echo htmlspecialchars($user_name); ?>!</h2>
+          <?php echo htmlspecialchars($user_name); ?>!
+        </h2>
         <p class="text-slate-700 mb-6 max-w-lg mx-auto">Continue your bridal journey with personalized recommendations and
           exclusive offers.</p>
 
@@ -83,7 +77,6 @@ include('../components/hero.html');
     (function () {
       var modal = document.getElementById('welcome-modal');
       var backdrop = document.getElementById('welcome-modal-backdrop');
-      var closeBtn = document.getElementById('welcome-modal-close');
       var serverFlag = <?php echo $showWelcomeFromServer ? 'true' : 'false'; ?>;
 
       if (!modal) return;
@@ -131,7 +124,6 @@ include('../components/hero.html');
 
       // close handlers
       backdrop.addEventListener('click', hideModal);
-      closeBtn.addEventListener('click', hideModal);
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideModal(); });
     })();
   </script>
