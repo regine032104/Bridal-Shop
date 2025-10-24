@@ -113,18 +113,6 @@ renderHeader([
           </div>
         <?php endforeach; ?>
       <?php endif; ?>
-
-
-    </div>
-
-    <!-- Pagination -->
-    <div class="flex justify-center mt-12">
-      <nav class="flex items-center space-x-2">
-        <button class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-candy-peach">←</button>
-        <button class="px-3 py-2 text-sm font-medium bg-candy-peach text-white rounded-md">1</button>
-        <button class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-candy-peach">2</button>
-        <button class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-candy-peach">→</button>
-      </nav>
     </div>
   </div>
 </section>
