@@ -410,7 +410,7 @@ include('../components/hero.html');
           class="inline-block rounded-full border-3 border-pink-500 px-8 py-4 text-base font-semibold text-slate-900 transition-all hover:bg-pink-500 hover:text-white focus:ring-2 focus:ring-candy-peach focus:ring-offset-2 focus:ring-offset-candy-cream focus:outline-none">
           Schedule Consultation
         </a>
-        <a href="../pages/about.php"
+        <a href="../pages/contact.php"
           class="inline-block rounded-full border-3 border-pink-500 px-8 py-4 text-base font-semibold text-slate-900 transition-all hover:bg-pink-500 hover:text-white focus:ring-2 focus:ring-candy-peach focus:ring-offset-2 focus:ring-offset-candy-cream focus:outline-none">
           Contact Us
         </a>

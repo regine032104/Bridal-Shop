@@ -30,18 +30,18 @@ try {
     $stmt = $pdo->prepare("SELECT customer_id, first_name, last_name, email, password_hash FROM customers WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
-    
+
     if (!$user) {
         echo json_encode(['success' => false, 'message' => 'Invalid email or password!']);
         exit;
     }
-    
+
     // Verify password
     if (!password_verify($password, $user['password_hash'])) {
         echo json_encode(['success' => false, 'message' => 'Invalid email or password!']);
         exit;
     }
-    
+
     // Start session if not already started
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
@@ -50,13 +50,15 @@ try {
     $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
     $_SESSION['user_email'] = $user['email'];
     $_SESSION['logged_in'] = true;
-    
+    // Show welcome modal on next page load (immediately after login)
+    $_SESSION['show_welcome'] = true;
+
     // After successful login, redirect to intended page or default
     $redirectTo = isset($_SESSION['redirect_after_login']) ? $_SESSION['redirect_after_login'] : '../pages/home.php';
     unset($_SESSION['redirect_after_login']);
 
     echo json_encode([
-        'success' => true, 
+        'success' => true,
         'message' => 'Login successful! Welcome back, ' . $user['first_name'] . '!',
         'user' => [
             'name' => $user['first_name'] . ' ' . $user['last_name'],
@@ -64,7 +66,7 @@ try {
         ],
         'redirect' => $redirectTo
     ]);
-    
+
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 }
