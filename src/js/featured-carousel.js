@@ -17,7 +17,7 @@
     var $indicators = $carousel.find('.indicator');
     var total = $slides.length;
     var current = 0;
-    var interval = 5000; // 5s
+    var interval = 2000; // 2s
     var timer = null;
     var animating = false;
 

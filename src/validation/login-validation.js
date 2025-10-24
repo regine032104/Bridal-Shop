@@ -58,13 +58,14 @@ $(document).ready(function() {
                 if (response.success) {
                     // Show success message
                     showLoginMessage('login-message', response.message, 'success');
-                    
-                    // Close modal and refresh page after 1.5 seconds
+
+                    // Close modal and redirect to the provided redirect URL (or home) after a short delay
                     setTimeout(function() {
-                        closeModal('login-modal');
-                        // Refresh the current page to show updated navbar and content
-                        window.location.reload();
-                    }, 1500);
+                        try { closeModal('login-modal'); } catch (e) { /* ignore */ }
+                        var dest = (response.redirect) ? response.redirect : '../pages/home.php';
+                        // Navigate to destination
+                        window.location.href = dest;
+                    }, 800);
                 } else {
                     // Show error message
                     showLoginMessage('login-message', response.message, 'error');

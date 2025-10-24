@@ -32,31 +32,109 @@ renderHeader([
 $title = "WELCOME TO";
 $highlight = 'PROMISE';
 $subtitle = "We design and curate stunning wedding dresses for brides and grooms, blending elegance, comfort, and romance—because every couple deserves to shine on their wedding day.";
-$extra_class = "py-32";
+$extra_class = ""; // removed extra vertical padding to avoid large gap under the hero
 
 include('../components/hero.html');
 ?>
 
-<!-- Personalized Welcome Section (only for logged-in users) -->
+<!-- Personalized Welcome Modal (only for logged-in users) -->
 <?php if ($isLoggedIn): ?>
-  <div class="py-16 bg-gradient-background">
-    <div class="container mx-auto px-4 text-center">
-      <h2 class="text-3xl font-bold text-dark mb-4">
-        Welcome back, <?php echo htmlspecialchars($user_name); ?>!
-      </h2>
-      <p class="text-slate-700 mb-8 max-w-2xl mx-auto">
-        Continue your bridal journey with personalized recommendations and exclusive offers.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="shop.php" class="btn-primary">
-          Continue Shopping
-        </a>
-        <a href="profile.php" class="btn-secondary">
-          View Profile
-        </a>
+  <?php
+  // If login_process set a flag to show welcome, capture and unset it so modal shows once immediately after login
+  $showWelcomeFromServer = false;
+  if (isset($_SESSION['show_welcome']) && $_SESSION['show_welcome']) {
+    $showWelcomeFromServer = true;
+    unset($_SESSION['show_welcome']);
+  }
+  ?>
+  <!-- Modal container (hidden by default) -->
+  <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none">
+    <!-- Backdrop -->
+    <div id="welcome-modal-backdrop" class="absolute inset-0 bg-black/50 opacity-0 transition-opacity" data-close="true">
+    </div>
+
+    <!-- Modal dialog -->
+    <div role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title" tabindex="-1"
+      class="relative mx-4 w-full max-w-xl transform rounded-2xl bg-white p-6 shadow-lg transition-all scale-95 opacity-0">
+      <button id="welcome-modal-close" aria-label="Close"
+        class="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-slate-700 hover:bg-white focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+
+      <div class="text-center">
+        <h2 id="welcome-modal-title" class="text-3xl font-bold text-dark mb-4">Welcome back,
+          <?php echo htmlspecialchars($user_name); ?>!</h2>
+        <p class="text-slate-700 mb-6 max-w-lg mx-auto">Continue your bridal journey with personalized recommendations and
+          exclusive offers.</p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="shop.php" class="btn-primary">Continue Shopping</a>
+          <a href="profile.php" class="btn-secondary">View Profile</a>
+        </div>
       </div>
     </div>
   </div>
+
+  <script>
+    (function () {
+      var modal = document.getElementById('welcome-modal');
+      var backdrop = document.getElementById('welcome-modal-backdrop');
+      var closeBtn = document.getElementById('welcome-modal-close');
+      var serverFlag = <?php echo $showWelcomeFromServer ? 'true' : 'false'; ?>;
+
+      if (!modal) return;
+
+      function showModal() {
+        // enable modal container
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        // animate in
+        requestAnimationFrame(function () {
+          backdrop.classList.remove('opacity-0');
+          backdrop.classList.add('opacity-100');
+          var dialog = modal.querySelector('[role="dialog"]');
+          if (dialog) {
+            dialog.classList.remove('scale-95', 'opacity-0');
+            dialog.classList.add('scale-100', 'opacity-100');
+            dialog.focus();
+          }
+        });
+      }
+
+      function hideModal() {
+        // animate out
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        var dialog = modal.querySelector('[role="dialog"]');
+        if (dialog) {
+          dialog.classList.remove('scale-100', 'opacity-100');
+          dialog.classList.add('scale-95', 'opacity-0');
+        }
+        // after animation, disable modal container
+        setTimeout(function () { modal.classList.add('opacity-0', 'pointer-events-none'); }, 200);
+      }
+
+      // If the server requested to show the welcome (immediately after login), honor it.
+      // Otherwise fall back to the previous sessionStorage show-once behavior.
+      try {
+        if (serverFlag) {
+          showModal();
+          try { sessionStorage.setItem('welcomeShown', '1'); } catch (e) { }
+        } else if (!sessionStorage.getItem('welcomeShown')) {
+          showModal();
+          try { sessionStorage.setItem('welcomeShown', '1'); } catch (e) { }
+        }
+      } catch (e) { /* ignore storage errors */ }
+
+      // close handlers
+      backdrop.addEventListener('click', hideModal);
+      closeBtn.addEventListener('click', hideModal);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideModal(); });
+    })();
+  </script>
 <?php endif; ?>
 
 <!-- FEATURED PRODUCTS -->
