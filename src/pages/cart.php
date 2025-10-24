@@ -37,6 +37,45 @@ if (isset($_POST['product_id'], $_POST['quantity']) && is_numeric($_POST['produc
     exit;
 }
 
+// AJAX handler: auto-update cart quantities from client-side (debounced requests)
+if (isset($_POST['ajax_update']) && isset($_SESSION['cart'])) {
+    // Update session cart based on posted quantities. If a product key is missing or qty = 0 remove it.
+    foreach ($_SESSION['cart'] as $id => $oldQty) {
+        $key = 'quantity-' . $id;
+        if (isset($_POST[$key]) && is_numeric($_POST[$key])) {
+            $newQty = (int) $_POST[$key];
+            if ($newQty > 0) {
+                $_SESSION['cart'][$id] = $newQty;
+            } else {
+                unset($_SESSION['cart'][$id]);
+            }
+        } else {
+            // key missing -> remove from cart
+            unset($_SESSION['cart'][$id]);
+        }
+    }
+
+    // Recalculate subtotal to return to client
+    $newSubtotal = 0.00;
+    if (!empty($_SESSION['cart'])) {
+        $ids = array_keys($_SESSION['cart']);
+        $array_to_question_marks = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $pdo->prepare('SELECT * FROM products WHERE product_id IN (' . $array_to_question_marks . ')');
+        $stmt->execute($ids);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $r) {
+            $pid = $r['product_id'];
+            if (isset($_SESSION['cart'][$pid])) {
+                $newSubtotal += (float) $r['price'] * (int) $_SESSION['cart'][$pid];
+            }
+        }
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'subtotal' => number_format((float) $newSubtotal, 2, '.', '')]);
+    exit;
+}
+
 // Remove product from cart, check for the URL param "remove", this is the product id, make sure it's a number and check if it's in the cart
 if (isset($_GET['remove']) && is_numeric($_GET['remove']) && isset($_SESSION['cart']) && isset($_SESSION['cart'][$_GET['remove']])) {
     // Remove the product from the shopping cart
@@ -169,7 +208,8 @@ renderHeader([
                                     </thead>
                                     <tbody>
                                         <?php foreach ($products as $product): ?>
-                                            <tr class="border-t border-pink-100">
+                                            <tr class="border-t border-pink-100" data-id="<?= $product['product_id'] ?>"
+                                                data-price="<?= $product['price'] ?>">
                                                 <td class="p-4">
                                                     <a href="product-detail.php?id=<?= $product['product_id'] ?>" class="block">
                                                         <img src="../<?= str_replace('src/img/', 'img/', $product['image_path']) ?>"
@@ -190,12 +230,22 @@ renderHeader([
                                                     <?= format_price($product['price']) ?>
                                                 </td>
                                                 <td class="p-4">
-                                                    <input type="number" name="quantity-<?= $product['product_id'] ?>"
-                                                        value="<?= $products_in_cart[$product['product_id']] ?>" min="1"
-                                                        max="99" placeholder="Quantity" required
-                                                        class="w-20 px-2 py-1 border border-pink-200 rounded text-center">
+                                                    <div class="inline-flex items-center gap-2">
+                                                        <button type="button"
+                                                            class="qty-btn decrease inline-flex h-8 w-8 items-center justify-center rounded border bg-white text-slate-700"
+                                                            aria-label="Decrease">-</button>
+                                                        <input type="number" name="quantity-<?= $product['product_id'] ?>"
+                                                            value="<?= $products_in_cart[$product['product_id']] ?>" min="0"
+                                                            max="99" placeholder="Quantity" required
+                                                            class="qty-input w-20 px-2 py-1 border border-pink-200 rounded text-center"
+                                                            data-base-price="<?= $product['price'] ?>">
+                                                        <button type="button"
+                                                            class="qty-btn increase inline-flex h-8 w-8 items-center justify-center rounded border bg-white text-slate-700"
+                                                            aria-label="Increase">+</button>
+                                                    </div>
                                                 </td>
-                                                <td class="p-4 font-semibold text-slate-700">
+                                                <td class="p-4 font-semibold text-slate-700 line-total"
+                                                    data-line-total="<?= $product['price'] * $products_in_cart[$product['product_id']] ?>">
                                                     <?= format_price($product['price'] * $products_in_cart[$product['product_id']]) ?>
                                                 </td>
                                             </tr>
@@ -213,7 +263,7 @@ renderHeader([
                         </h3>
                         <div class="mb-2 flex justify-between text-slate-900">
                             <span>Subtotal</span>
-                            <span><?= format_price($subtotal) ?></span>
+                            <span id="subtotal-amount"><?= format_price($subtotal) ?></span>
                         </div>
                         <div class="mb-4 flex justify-between text-slate-900">
                             <span>Estimated Shipping</span>
@@ -222,11 +272,10 @@ renderHeader([
                         <hr class="my-4 border-t border-pink-100" />
                         <div class="mb-6 flex justify-between text-lg font-semibold text-slate-700">
                             <span>Total</span>
-                            <span><?= format_price($subtotal) ?></span>
+                            <span id="total-amount"><?= format_price($subtotal) ?></span>
                         </div>
                         <div class="space-y-3">
-                            <input type="submit" value="Update Cart" name="update"
-                                class="w-full rounded-md bg-pink-200 py-3 font-semibold text-slate-700 hover:bg-pink-300 transition-colors">
+                            <!-- Update Cart removed: auto-update enabled -->
                             <input type="submit" value="Place Order" name="placeorder"
                                 class="w-full rounded-md bg-gradient-to-r from-pink-500 to-rose-500 py-3 font-semibold text-white hover:shadow-[0_0_30px_rgba(236,72,153,0.25)] transition-all">
                         </div>
@@ -249,3 +298,133 @@ renderFooter([
     ]
 ]);
 ?>
+
+<script>
+    // Cart quantity +/- and live total update
+    (function () {
+        function qs(sel, root) { return (root || document).querySelector(sel); }
+        function qsa(sel, root) { return Array.from((root || document).querySelectorAll(sel)); }
+
+        function formatPrice(num) { return '₱' + (Number(num) || 0).toFixed(2); }
+
+        function recalcTotals() {
+            var lineTotals = qsa('.line-total');
+            var subtotal = 0;
+            lineTotals.forEach(function (el) {
+                var val = parseFloat(el.getAttribute('data-line-total')) || 0;
+                subtotal += val;
+            });
+            // update subtotal and total
+            var subtotalEl = qs('#subtotal-amount');
+            var totalEl = qs('#total-amount');
+            if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal);
+            if (totalEl) totalEl.textContent = formatPrice(subtotal);
+        }
+
+        // debounce helper
+        function debounce(func, wait) {
+            var timeout;
+            return function () {
+                var context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(function () { func.apply(context, args); }, wait);
+            };
+        }
+
+        // Send quantities to server via AJAX (FormData) for persistent update
+        function sendUpdateToServer() {
+            var inputs = qsa('.qty-input');
+            var fd = new FormData();
+            fd.append('ajax_update', '1');
+            inputs.forEach(function (input) {
+                // only include inputs that exist in DOM; removed rows are considered removed
+                fd.append(input.name, input.value);
+            });
+
+            fetch(window.location.pathname, {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: fd
+            }).then(function (res) {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            }).then(function (data) {
+                if (data && data.subtotal !== undefined) {
+                    var subtotalEl = qs('#subtotal-amount');
+                    var totalEl = qs('#total-amount');
+                    var numeric = parseFloat(data.subtotal) || 0;
+                    if (subtotalEl) subtotalEl.textContent = '₱' + numeric.toFixed(2);
+                    if (totalEl) totalEl.textContent = '₱' + numeric.toFixed(2);
+                }
+            }).catch(function (err) {
+                console.error('Cart update failed:', err);
+            });
+        }
+
+        var debouncedServerUpdate = debounce(sendUpdateToServer, 600);
+
+        function updateLineTotalFromInput(input) {
+            var qty = parseInt(input.value) || 0;
+            var base = parseFloat(input.getAttribute('data-base-price')) || 0;
+            var row = input.closest('tr');
+            var lineCell = row && row.querySelector('.line-total');
+            var newLine = base * qty;
+            if (lineCell) {
+                lineCell.setAttribute('data-line-total', newLine);
+                lineCell.textContent = formatPrice(newLine);
+            }
+        }
+
+        // handle clicks on +/- buttons
+        document.addEventListener('click', function (e) {
+            var dec = e.target.closest('.qty-btn.decrease');
+            var inc = e.target.closest('.qty-btn.increase');
+            if (dec || inc) {
+                e.preventDefault();
+                var btn = dec || inc;
+                var row = btn.closest('tr');
+                var input = row && row.querySelector('.qty-input');
+                if (!input) return;
+                var current = parseInt(input.value) || 0;
+                if (btn.classList.contains('increase')) {
+                    input.value = Math.min(99, current + 1);
+                } else {
+                    input.value = Math.max(0, current - 1);
+                }
+                updateLineTotalFromInput(input);
+                // if quantity becomes 0, remove the row visually to indicate removal
+                if (parseInt(input.value) === 0) {
+                    // remove row from DOM so totals and UI reflect removal; user still must click 'Update Cart' to persist server-side
+                    row.parentNode && row.parentNode.removeChild(row);
+                }
+                recalcTotals();
+                // send updated quantities to server
+                debouncedServerUpdate();
+            }
+        });
+
+        // handle manual input changes
+        document.addEventListener('input', function (e) {
+            if (e.target && e.target.classList && e.target.classList.contains('qty-input')) {
+                var input = e.target;
+                var val = parseInt(input.value) || 0;
+                if (val < 0) input.value = 0;
+                if (val > 99) input.value = 99;
+                updateLineTotalFromInput(input);
+                if (parseInt(input.value) === 0) {
+                    var row = input.closest('tr');
+                    row && row.parentNode && row.parentNode.removeChild(row);
+                }
+                recalcTotals();
+                // send updated quantities to server
+                debouncedServerUpdate();
+            }
+        });
+
+        // initial recalc (in case PHP generated different values)
+        window.addEventListener('load', function () {
+            qsa('.qty-input').forEach(function (input) { updateLineTotalFromInput(input); });
+            recalcTotals();
+        });
+    })();
+</script>
