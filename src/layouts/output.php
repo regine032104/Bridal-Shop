@@ -4,9 +4,9 @@
  * while preserving identical UI/UX by inlining styles at runtime.
  */
 if (!function_exists('getEmbeddedOutputCss')) {
-    function getEmbeddedOutputCss(): string
-    {
-        return <<<'CSS'
+  function getEmbeddedOutputCss(): string
+  {
+    return <<<'CSS'
 /*! tailwindcss v4.1.14 | MIT License | https://tailwindcss.com */
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=Unna:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @layer properties;
@@ -2895,6 +2895,6 @@ if (!function_exists('getEmbeddedOutputCss')) {
   }
 }
 CSS;
-    }
+  }
 }
 ?>
