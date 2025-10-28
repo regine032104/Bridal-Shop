@@ -60,6 +60,7 @@ $user_email = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
           >Home</a
         >
       </li>
+
       <li class="relative group">
         <a
           id="shop-toggle"
@@ -133,6 +134,43 @@ $user_email = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
           >Contact</a
         >
       </li>
+      <!-- Cart Nav with badge -->
+      <li class="relative">
+        <a
+          href="../pages/cart.php"
+          class="px-4 py-2 align-middle hover:text-pink-500 md:px-2 flex items-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 mr-1 text-pink-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A1 1 0 007.6 17h8.8a1 1 0 00.95-.68L21 13M7 13V6a1 1 0 011-1h9a1 1 0 011 1v7"
+            />
+          </svg>
+          Cart
+          <?php
+            $cartCount = 0;
+            if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+              $cartCount = count($_SESSION['cart']); // Unique items only
+            }
+            if ($cartCount >
+          0): ?>
+          <span
+            class="ml-2 inline-flex items-center justify-center rounded-full bg-pink-500 text-white text-xs font-bold px-2 py-1 min-w-[22px]"
+            style="min-width: 22px"
+          >
+            <?= $cartCount ?>
+          </span>
+          <?php endif; ?>
+        </a>
+      </li>
 
       <!-- USER-SPECIFIC NAVIGATION -->
       <?php if ($isLoggedIn): ?>
@@ -140,13 +178,26 @@ $user_email = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
       <li class="relative group">
         <a
           id="account-toggle"
-          href="#"
+          href="../pages/profile.php"
           class="px-4 py-2 align-middle hover:text-pink-500 md:px-2 flex items-center"
           aria-haspopup="true"
           aria-expanded="false"
         >
           <span id="account-text">
-            <?php echo htmlspecialchars($user_name); ?>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-10 w-10 text-pink-700"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5.121 17.804A9.001 9.001 0 0112 15c2.21 0 4.21.805 5.879 2.146M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
           </span>
           <svg
             class="w-2 h-4 ml-1 transition-transform group-hover:rotate-180"
@@ -180,24 +231,6 @@ $user_email = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
               </p>
             </div>
             <a
-              href="../pages/cart.php"
-              class="block px-4 py-3 hover:text-pink-500 hover:bg-light transition-colors"
-            >
-              My Cart
-            </a>
-            <a
-              href="../pages/orders.php"
-              class="block px-4 py-3 hover:text-pink-500 hover:bg-light transition-colors"
-            >
-              My Orders
-            </a>
-            <a
-              href="../pages/profile.php"
-              class="block px-4 py-3 hover:text-pink-500 hover:bg-light transition-colors"
-            >
-              Profile Settings
-            </a>
-            <a
               href="../backend/logout.php"
               class="block px-4 py-3 hover:text-pink-500 hover:bg-light transition-colors"
             >
@@ -211,12 +244,27 @@ $user_email = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
       <li class="relative group">
         <a
           id="account-toggle"
-          href="#"
+          href="../pages/profile.php"
           class="px-4 py-2 align-middle hover:text-pink-500 md:px-2 flex items-center"
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <span id="account-text">My Account</span>
+          <span id="account-text">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-10 w-10 text-pink-700"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5.121 17.804A9.001 9.001 0 0112 15c2.21 0 4.21.805 5.879 2.146M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+          </span>
           <svg
             class="w-2 h-4 ml-1 transition-transform group-hover:rotate-180"
             fill="none"

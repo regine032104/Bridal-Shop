@@ -17,6 +17,9 @@ CREATE TABLE customers (
     province VARCHAR(100),
     barangay VARCHAR(100),
     zip_code VARCHAR(10),
+    gender VARCHAR(20),
+    date_of_birth DATE,
+    profile_img VARCHAR(255),
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -147,6 +147,12 @@ renderHeader([
                 <p class="text-slate-700">There was an error placing your order. Please try again.</p>
             </div>
         <?php endif; ?>
+        <?php if (isset($_GET['error']) && $_GET['error'] == 'missing_address'): ?>
+            <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                <p class="text-yellow-800">You must complete your address before placing an order. Please update your
+                    profile with your full address details.</p>
+            </div>
+        <?php endif; ?>
 
         <?php if (empty($products)): ?>
             <div class="flex flex-col-reverse gap-8 lg:flex-row">
@@ -161,8 +167,11 @@ renderHeader([
                             your selections once you add them.
                         </p>
                         <a href="shop.php"
-                            class="mt-8 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-3 font-medium text-white transition hover:shadow-[0_0_40px_rgba(236,72,153,0.25)] focus:ring-2 focus:ring-pink-400 focus:ring-offset-2 focus:ring-offset-pink-100 focus:outline-none">Start
+                            class="mt-8 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-3 font-medium text-white transition hover:shadow-[0_0_40px_rgba(236,72,153,0.25)] focus:ring-2 focus:ring-pink-400 focus:ring-offset-2 focus:ring-offset-pink-100 focus:outline-none">Continue
                             Shopping</a>
+                        <a href="orders.php"
+                            class="mt-4 inline-flex items-center justify-center rounded-full bg-pink-100 text-pink-700 font-medium px-8 py-3 border border-pink-300 hover:bg-pink-200 transition">My
+                            Orders</a>
                     </div>
                 </section>
 
@@ -188,6 +197,12 @@ renderHeader([
                         class="w-full cursor-not-allowed rounded-md bg-pink-300 py-3 font-semibold text-white opacity-90">
                         Cart is Empty
                     </button>
+                    <a href="shop.php"
+                        class="mt-6 w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-200 to-rose-400 px-8 py-3 font-medium text-white transition hover:shadow-[0_0_40px_rgba(236,72,153,0.25)] focus:ring-2 focus:ring-pink-400 focus:ring-offset-2 focus:ring-offset-pink-100 focus:outline-none">Continue
+                        Shopping</a>
+                    <a href="orders.php"
+                        class="w-full inline-flex items-center justify-center rounded-full bg-pink-100 text-pink-700 font-medium px-8 py-3 border border-pink-300 hover:bg-pink-200 transition mt-3">My
+                        Orders</a>
                 </aside>
             </div>
         <?php else: ?>
@@ -278,6 +293,12 @@ renderHeader([
                             <!-- Update Cart removed: auto-update enabled -->
                             <input type="submit" value="Place Order" name="placeorder"
                                 class="w-full rounded-md bg-gradient-to-r from-pink-500 to-rose-500 py-3 font-semibold text-white hover:shadow-[0_0_30px_rgba(236,72,153,0.25)] transition-all">
+                            <a href="shop.php"
+                                class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-3 font-medium text-white transition hover:shadow-[0_0_40px_rgba(236,72,153,0.25)] focus:ring-2 focus:ring-pink-400 focus:ring-offset-2 focus:ring-offset-pink-100 focus:outline-none">Continue
+                                Shopping</a>
+                            <a href="orders.php"
+                                class="w-full inline-flex items-center justify-center rounded-full bg-pink-100 text-pink-700 font-medium px-8 py-3 border border-pink-300 hover:bg-pink-200 transition mt-3">My
+                                Orders</a>
                         </div>
                     </aside>
                 </div>

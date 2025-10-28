@@ -98,7 +98,7 @@ renderHeader([
                     <p class="mb-6 text-slate-700">You haven't placed any orders yet. Start shopping to see your orders
                         here.
                     </p>
-                    <a href="shop.php" class="btn-primary">Start Shopping</a>
+                    <a href="shop.php" class="btn-primary">Continue Shopping</a>
                 </div>
             </div>
         <?php else: ?>
@@ -156,6 +156,9 @@ renderHeader([
                         </div>
                     </div>
                 <?php endforeach; ?>
+                <div class="flex justify-center mt-10">
+                    <a href="shop.php" class="btn-primary">Continue Shopping</a>
+                </div>
             </div>
         <?php endif; ?>
     </div>

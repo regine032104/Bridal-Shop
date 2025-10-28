@@ -58,9 +58,20 @@ try {
 
     // Insert into database using PDO prepared statement
     $stmt = $pdo->prepare("INSERT INTO customers (first_name, last_name, email, contact_number, password_hash) VALUES (?, ?, ?, ?, ?)");
-    
+
     if ($stmt->execute([$first_name, $last_name, $email, $contact_number, $password_hash])) {
-        echo json_encode(['success' => true, 'message' => 'Registration successful! You can now browse the catalog.']);
+        // Start session and set welcome modal flag, username, and auto-login
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['show_welcome'] = true;
+        $_SESSION['user_name'] = $first_name;
+        $_SESSION['logged_in'] = true;
+        // Get the new user's ID
+        $user_id = $pdo->lastInsertId();
+        $_SESSION['user_id'] = $user_id;
+        $_SESSION['user_email'] = $email;
+        echo json_encode(['success' => true, 'message' => 'Registration successful! You are now logged in.']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Error: Registration failed. Please try again.']);
     }
