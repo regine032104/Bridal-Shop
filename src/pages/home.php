@@ -34,7 +34,7 @@ $highlight = 'PROMISE';
 $subtitle = "We design and curate stunning wedding dresses for brides and grooms, blending elegance, comfort, and romance—because every couple deserves to shine on their wedding day.";
 $extra_class = ""; // removed extra vertical padding to avoid large gap under the hero
 
-include('../components/hero.html');
+include('../components/hero.php');
 ?>
 
 
@@ -74,52 +74,7 @@ if (isset($_SESSION['show_welcome']) && $_SESSION['show_welcome']) {
     </div>
   </div>
 
-  <script>
-    (function () {
-      var modal = document.getElementById('welcome-modal');
-      var backdrop = document.getElementById('welcome-modal-backdrop');
-      var serverFlag = true;
 
-      if (!modal) return;
-
-      function showModal() {
-        // enable modal container
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        // animate in
-        requestAnimationFrame(function () {
-          backdrop.classList.remove('opacity-0');
-          backdrop.classList.add('opacity-100');
-          var dialog = modal.querySelector('[role="dialog"]');
-          if (dialog) {
-            dialog.classList.remove('scale-95', 'opacity-0');
-            dialog.classList.add('scale-100', 'opacity-100');
-            dialog.focus();
-          }
-        });
-      }
-
-      function hideModal() {
-        // animate out
-        backdrop.classList.remove('opacity-100');
-        backdrop.classList.add('opacity-0');
-        var dialog = modal.querySelector('[role="dialog"]');
-        if (dialog) {
-          dialog.classList.remove('scale-100', 'opacity-100');
-          dialog.classList.add('scale-95', 'opacity-0');
-        }
-        // after animation, disable modal container
-        setTimeout(function () { modal.classList.add('opacity-0', 'pointer-events-none'); }, 200);
-      }
-
-      // Always show modal if serverFlag is true (after registration or login)
-      showModal();
-      try { sessionStorage.setItem('welcomeShown', '1'); } catch (e) { }
-
-      // close handlers
-      backdrop.addEventListener('click', hideModal);
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideModal(); });
-    })();
-  </script>
 <?php endif; ?>
 
 <!-- FEATURED PRODUCTS -->
@@ -348,7 +303,8 @@ renderFooter([
     '<script src="../js/validation-integration.js"></script>',
     '<script src="../js/auth.js"></script>',
     '<script src="../js/reveal.js"></script>',
-    '<script src="../js/reviews.js"></script>'
+    '<script src="../js/reviews.js"></script>',
+    '<script src="../js/home-page.js"></script>'
   ]
 ]);
 ?>

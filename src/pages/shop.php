@@ -35,7 +35,7 @@ $highlight = 'PRODUCTS';
 $subtitle = "We Browse our curated collection of wedding attire crafted for elegance, comfort and timeless memories.";
 $extra_class = "py-32";
 
-include('../components/hero.html');
+include('../components/hero.php');
 ?>
 
 
@@ -207,24 +207,6 @@ include('../components/hero.html');
     </div>
   </div>
   <?php
-  // jQuery interactivity: confirm direct order and handle missing address warnings
-  $directOrderJs = '<script>
-    $(function(){
-      $(document).on("submit", ".direct-order-form", function(e){
-        // Optional confirmation before placing a direct order
-        var ok = window.confirm("Place this order now?");
-        if (!ok) { e.preventDefault(); }
-      });
-      $(document).on("click", ".needs-address", function(e){
-        // Friendly reminder before redirecting to profile
-        if (!window.confirm("You need to add your address before ordering. Go to profile now?")) {
-          e.preventDefault();
-        }
-      });
-    });
-  </script>';
-  ?>
-  <?php
   renderFooter([
     'scripts' => [
       '<script src="https://unpkg.com/motion@latest/dist/motion.umd.js"></script>',
@@ -234,7 +216,7 @@ include('../components/hero.html');
       '<script src="../js/reveal.js"></script>',
       '<script src="../js/scroll-fade.js"></script>',
       '<script src="../js/reviews.js"></script>',
-      $directOrderJs
+      '<script src="../js/shop-page.js"></script>'
     ]
   ]);
   ?>

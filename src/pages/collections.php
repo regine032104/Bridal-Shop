@@ -19,7 +19,7 @@ $title = "THE BRIDAL";
 $highlight = "COLLECTIONS";
 $subtitle = "Discover our exquisite collection of wedding dresses, each designed to make your special day unforgettable.";
 $extra_class = "py-32";
-include('../components/hero.html');
+include('../components/hero.php');
 ?>
 
 <section class="flex-grow py-5 md:py-5">

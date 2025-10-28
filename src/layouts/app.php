@@ -20,14 +20,16 @@ if (!function_exists('renderHeader')) {
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title><?= htmlspecialchars($title) ?></title>
-            <link rel="stylesheet" href="../output.css" />
+            <?php include_once('../layouts/styles-inline.php'); ?>
+            <?php // Inline compiled CSS to avoid external .css files while preserving UI/UX
+                    renderInlineStylesFromFiles(['../output.css']); ?>
             <?= $additionalHead ?>
         </head>
 
         <body class="<?= $bodyClass ?>">
-            <?php include('../components/navbar.html'); ?>
+            <?php include('../components/navbar.php'); ?>
             <?php if ($showModal) {
-                include('../components/modal.html');
+                include('../components/modal.php');
             } ?>
             <main class="<?= $mainClass ?>">
                 <?php
@@ -40,11 +42,11 @@ if (!function_exists('renderFooter')) {
         $extraScripts = $options['scripts'] ?? [];
         ?>
             </main>
-            <?php include('../components/footer.html'); ?>
+            <?php include('../components/footer.php'); ?>
             <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-            <script src="../validation/register-validation.js"></script>
-            <script src="../validation/login-validation.js"></script>
+            <script src="../js/validation/register-validation.js"></script>
+            <script src="../js/validation/login-validation.js"></script>
             <script src="../js/navbar-shadow.js"></script>
             <script src="../js/navbar-active.js"></script>
             <?php
