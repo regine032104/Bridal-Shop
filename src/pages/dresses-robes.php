@@ -111,6 +111,7 @@ renderHeader([
               <p class="text-lg font-semibold text-slate-900">
                 <?= format_price($product['price']); ?>
               </p>
+
             </div>
           </div>
         <?php endforeach; ?>

@@ -37,16 +37,17 @@ $extra_class = ""; // removed extra vertical padding to avoid large gap under th
 include('../components/hero.html');
 ?>
 
-<!-- Personalized Welcome Modal (only for logged-in users) -->
-<?php if ($isLoggedIn): ?>
-  <?php
-  // If login_process set a flag to show welcome, capture and unset it so modal shows once immediately after login
-  $showWelcomeFromServer = false;
-  if (isset($_SESSION['show_welcome']) && $_SESSION['show_welcome']) {
-    $showWelcomeFromServer = true;
-    unset($_SESSION['show_welcome']);
-  }
-  ?>
+
+<!-- Personalized Welcome Modal (for login or registration) -->
+<?php
+// If login_process or reg_process set a flag to show welcome, capture and unset it so modal shows once immediately after login or registration
+$showWelcomeFromServer = false;
+if (isset($_SESSION['show_welcome']) && $_SESSION['show_welcome']) {
+  $showWelcomeFromServer = true;
+  unset($_SESSION['show_welcome']);
+}
+?>
+<?php if ($showWelcomeFromServer): ?>
   <!-- Modal container (hidden by default) -->
   <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none">
     <!-- Backdrop -->
@@ -59,7 +60,7 @@ include('../components/hero.html');
       <!-- Close button intentionally removed per request -->
 
       <div class="text-center">
-        <h2 id="welcome-modal-title" class="text-3xl font-bold text-dark mb-4">Welcome back,
+        <h2 id="welcome-modal-title" class="text-3xl font-bold text-dark mb-4">Welcome,
           <?php echo htmlspecialchars($user_name); ?>!
         </h2>
         <p class="text-slate-700 mb-6 max-w-lg mx-auto">Continue your bridal journey with personalized recommendations and
@@ -77,7 +78,7 @@ include('../components/hero.html');
     (function () {
       var modal = document.getElementById('welcome-modal');
       var backdrop = document.getElementById('welcome-modal-backdrop');
-      var serverFlag = <?php echo $showWelcomeFromServer ? 'true' : 'false'; ?>;
+      var serverFlag = true;
 
       if (!modal) return;
 
@@ -110,17 +111,9 @@ include('../components/hero.html');
         setTimeout(function () { modal.classList.add('opacity-0', 'pointer-events-none'); }, 200);
       }
 
-      // If the server requested to show the welcome (immediately after login), honor it.
-      // Otherwise fall back to the previous sessionStorage show-once behavior.
-      try {
-        if (serverFlag) {
-          showModal();
-          try { sessionStorage.setItem('welcomeShown', '1'); } catch (e) { }
-        } else if (!sessionStorage.getItem('welcomeShown')) {
-          showModal();
-          try { sessionStorage.setItem('welcomeShown', '1'); } catch (e) { }
-        }
-      } catch (e) { /* ignore storage errors */ }
+      // Always show modal if serverFlag is true (after registration or login)
+      showModal();
+      try { sessionStorage.setItem('welcomeShown', '1'); } catch (e) { }
 
       // close handlers
       backdrop.addEventListener('click', hideModal);

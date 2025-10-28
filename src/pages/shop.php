@@ -103,6 +103,40 @@ include('../components/hero.html');
                         Add to Cart
                       </button>
                     </form>
+                    <?php
+                    // Determine if the current user has a complete address
+                    $hasAddress = false;
+                    if ($isLoggedIn && isset($_SESSION['user_id'])) {
+                      $chk = $pdo->prepare("SELECT street_address, barangay, city, province, zip_code FROM customers WHERE customer_id = ?");
+                      $chk->execute([$_SESSION['user_id']]);
+                      $u = $chk->fetch();
+                      $parts = array_filter([
+                        $u['street_address'] ?? '',
+                        $u['barangay'] ?? '',
+                        $u['city'] ?? '',
+                        $u['province'] ?? '',
+                        $u['zip_code'] ?? ''
+                      ]);
+                      $hasAddress = count($parts) === 5;
+                    }
+                    ?>
+                    <?php if ($hasAddress): ?>
+                      <!-- Direct order form: posts single product to backend -->
+                      <form action="../backend/place_order.php" method="post" class="inline direct-order-form">
+                        <input type="hidden" name="direct_product_id" value="<?= $product['product_id'] ?>">
+                        <input type="hidden" name="direct_quantity" value="1">
+                        <button type="submit"
+                          class="cursor-pointer rounded-md bg-pink-700 px-4 py-2 text-white transition hover:shadow-[0_0_30px_rgba(236,72,153,0.25)] hover:scale-105">
+                          Place Order
+                        </button>
+                      </form>
+                    <?php else: ?>
+                      <!-- Prompt user to add address before allowing direct order -->
+                      <a href="profile.php?error=missing_address"
+                        class="cursor-pointer rounded-md bg-yellow-500 px-4 py-2 text-white transition hover:shadow-[0_0_30px_rgba(234,179,8,0.25)] hover:scale-105 needs-address">
+                        Add Address
+                      </a>
+                    <?php endif; ?>
                   <?php else: ?>
                     <button type="button" onclick="openModal('login-modal')"
                       class="cursor-pointer rounded-md bg-gradient-to-r from-pink-500 to-rose-500 px-4 py-2 text-white transition hover:shadow-[0_0_30px_rgba(236,72,153,0.25)] hover:scale-105">
@@ -115,6 +149,38 @@ include('../components/hero.html');
           <?php endforeach; ?>
         <?php endif; ?>
       </div>
+
+      <!-- Warning Message for Logged Out Users -->
+      <?php if (!$isLoggedIn): ?>
+        <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-center">
+          <p class="text-yellow-800">You must create an account and upload your address before placing an order.</p>
+        </div>
+      <?php endif; ?>
+
+      <!-- Address Incompletion Warning -->
+      <?php
+      $showAddressWarning = false;
+      if ($isLoggedIn && isset($_SESSION['user_id'])) {
+        $user_stmt = $pdo->prepare("SELECT street_address, barangay, city, province, zip_code FROM customers WHERE customer_id = ?");
+        $user_stmt->execute([$_SESSION['user_id']]);
+        $user = $user_stmt->fetch();
+        $address_parts = array_filter([
+          $user['street_address'] ?? '',
+          $user['barangay'] ?? '',
+          $user['city'] ?? '',
+          $user['province'] ?? '',
+          $user['zip_code'] ?? ''
+        ]);
+        if (count($address_parts) < 5) {
+          $showAddressWarning = true;
+        }
+      }
+      ?>
+      <?php if ($showAddressWarning): ?>
+        <div class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-center">
+          <p class="text-yellow-800">Please complete your address in your profile before placing an order.</p>
+        </div>
+      <?php endif; ?>
 
       <!-- Pagination -->
       <?php if ($total_products > $num_products_on_each_page): ?>
@@ -141,6 +207,24 @@ include('../components/hero.html');
     </div>
   </div>
   <?php
+  // jQuery interactivity: confirm direct order and handle missing address warnings
+  $directOrderJs = '<script>
+    $(function(){
+      $(document).on("submit", ".direct-order-form", function(e){
+        // Optional confirmation before placing a direct order
+        var ok = window.confirm("Place this order now?");
+        if (!ok) { e.preventDefault(); }
+      });
+      $(document).on("click", ".needs-address", function(e){
+        // Friendly reminder before redirecting to profile
+        if (!window.confirm("You need to add your address before ordering. Go to profile now?")) {
+          e.preventDefault();
+        }
+      });
+    });
+  </script>';
+  ?>
+  <?php
   renderFooter([
     'scripts' => [
       '<script src="https://unpkg.com/motion@latest/dist/motion.umd.js"></script>',
@@ -149,7 +233,8 @@ include('../components/hero.html');
       '<script src="../js/auth.js"></script>',
       '<script src="../js/reveal.js"></script>',
       '<script src="../js/scroll-fade.js"></script>',
-      '<script src="../js/reviews.js"></script>'
+      '<script src="../js/reviews.js"></script>',
+      $directOrderJs
     ]
   ]);
   ?>

@@ -117,18 +117,7 @@ function navClass($page)
                   <?php echo htmlspecialchars($user_email); ?>
                 </p>
               </div>
-              <a href="../pages/cart.php"
-                class="block px-4 py-3 hover:text-pink-500 hover:bg-light transition-colors <?php echo navClass('cart.php'); ?>">
-                My Cart
-              </a>
-              <a href="../pages/orders.php"
-                class="block px-4 py-3 hover:text-pink-500 hover:bg-light transition-colors <?php echo navClass('orders.php'); ?>">
-                My Orders
-              </a>
-              <a href="../pages/profile.php"
-                class="block px-4 py-3 hover:text-pink-500 hover:bg-light transition-colors <?php echo navClass('profile.php'); ?>">
-                Profile Settings
-              </a>
+
               <a href="../backend/logout.php"
                 class="block px-4 py-3 hover:text-pink-500 hover:bg-light transition-colors">
                 Logout
