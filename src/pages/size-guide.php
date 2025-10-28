@@ -14,7 +14,7 @@ renderHeader([
 $title = 'SIZE';
 $highlight = 'GUIDE';
 $subtitle = 'Find your perfect fit with our comprehensive wedding dress sizing guide and measurement instructions.';
-include('../components/hero.html');
+include('../components/hero.php');
 ?>
 
 <section class="py-16 md:py-10">

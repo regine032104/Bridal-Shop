@@ -32,20 +32,35 @@ function format_price($price)
 // Template header function
 function template_header($title)
 {
+    // Buffer PHP components so their PHP executes and HTML is captured
+    ob_start();
+    include('../components/navbar.php');
+    $navbarHtml = ob_get_clean();
+
+    ob_start();
+    include('../components/modal.php');
+    $modalHtml = ob_get_clean();
+
+    // Inline compiled CSS via helper
+    ob_start();
+    include_once('../layouts/styles-inline.php');
+    renderInlineStylesFromFiles(['../output.css']);
+    $inlineCss = ob_get_clean();
+
     $header = '<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>' . htmlspecialchars($title) . ' - Promise Shop</title>
-    <link rel="stylesheet" href="../output.css">
+    ' . $inlineCss . '
     <link href="https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&family=Unna:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gradient-to-br from-pink-50 to-rose-50 min-h-screen">
     <!-- NAVBAR -->
-    ' . file_get_contents('../components/navbar.html') . '
+    ' . $navbarHtml . '
     <!-- MODAL -->
-    ' . file_get_contents('../components/modal.html') . '
+    ' . $modalHtml . '
     <main class="mx-auto max-w-screen-xl flex-1">';
     return $header;
 }
@@ -53,9 +68,14 @@ function template_header($title)
 // Template footer function
 function template_footer()
 {
+    // Buffer footer component to execute any PHP
+    ob_start();
+    include('../components/footer.php');
+    $footerComp = ob_get_clean();
+
     $footer = '</main>
     <!-- FOOTER -->
-    ' . file_get_contents('../components/footer.html') . '
+    ' . $footerComp . '
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="../js/filter.js"></script>
